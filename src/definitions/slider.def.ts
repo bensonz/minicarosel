@@ -1,6 +1,7 @@
 export interface ISliderImage {
   id: string;
-  link: string;
+  url: string;
+  metaData: Record<string, any>;
 }
 
 export interface ISliderItem {
@@ -9,7 +10,7 @@ export interface ISliderItem {
   description: string;
   buttonText: string;
   component: string;
-  backgroundImage: ISliderImage;
+  bgImage: ISliderImage;
 }
 
 /**
