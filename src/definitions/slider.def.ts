@@ -10,7 +10,7 @@ export interface ISliderItem {
   description: string;
   buttonText: string;
   component: string;
-  bgImage: ISliderImage;
+  bgImage?: ISliderImage;
 }
 
 /**

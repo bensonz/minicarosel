@@ -38,19 +38,14 @@ const SliderDataGrid = ({ sliderId }: IProps) => {
   useEffect(() => {
     fetchData();
   }, [sliderId]);
-
-  const addSlide = async () => {
-    if (!sliderId) {
-      return;
-    }
-    const resp = await fetch(`/api/slider/${sliderId}/slide`, {
-      method: "POST",
-    });
-    if (resp.ok) {
-      fetchData();
-    } else {
-      toast.error("Failed to create new slide");
-    }
+  const [slideData, setSlideData] = useState<ISliderItem | undefined>();
+  const editSlide = (slide: ISliderItem) => {
+    setSlideData(slide);
+    setModalOpen(true);
+  };
+  const addSlide = () => {
+    setSlideData(undefined);
+    setModalOpen(true);
   };
 
   if (!sliderId) {
@@ -63,11 +58,19 @@ const SliderDataGrid = ({ sliderId }: IProps) => {
     { field: "buttonText", headerName: "Button text" },
     { field: "component", headerName: "Component" },
     { field: "backgroundImage", headerName: "Background Image" },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 130,
+      renderCell: (params: any) => (
+        <Button onClick={() => editSlide(params.row)}>Edit</Button>
+      ),
+    },
   ];
   return (
     <>
       <EditAddModal
-        sliderId={sliderId}
+        slideData={slideData}
         open={modalOpen}
         setOpen={setModalOpen}
       />
@@ -82,7 +85,7 @@ const SliderDataGrid = ({ sliderId }: IProps) => {
                 variant="contained"
                 color="primary"
                 size="small"
-                onClick={() => setModalOpen(true)}
+                onClick={addSlide}
               >
                 New Slide
               </Button>

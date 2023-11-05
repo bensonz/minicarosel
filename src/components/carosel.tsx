@@ -1,5 +1,5 @@
 import { Box, Button, ButtonGroup, Skeleton, Typography } from "@mui/material";
-import { ISlider } from "@/definitions/slider.def";
+import { ISlider, ISliderImage, ISliderItem } from "@/definitions/slider.def";
 import { toast } from "react-toastify";
 import UploadFileButton from "./uiComponents/uploadFileButton";
 import useSWR from "swr";
@@ -9,40 +9,25 @@ interface IProps {
 }
 
 const Carosel = ({ slider }: IProps) => {
-  const { data, isLoading, error } = useSWR(
+  const { data, isLoading, error } = useSWR<ISliderItem[]>(
     `/api/slider/${slider?.id}/slide`,
-    (url) => fetch(url).then((res) => res.json()),
+    async (url) => {
+      const resp = await fetch(url);
+      if (resp.ok) {
+        const respJson = await resp.json();
+        return respJson.data;
+      }
+      return [];
+    },
     {
       refreshInterval: 0,
       revalidateOnFocus: false,
     }
   );
-
-  const handleFileChange = async (file: File) => {
-    const formData = new FormData();
-    if (!file) {
-      return;
-    }
-    formData.append("file", file);
-    try {
-      const resp = await fetch(`/api/slider/${slider?.id}/carosel`, {
-        method: "POST",
-        body: formData,
-      });
-      const json = await resp.json();
-      if (!resp.ok) {
-        toast.error(json.message);
-        return;
-      }
-      toast.success("Parsed supplier successfully");
-    } catch (e) {
-      toast.error("Failed to upload supplier");
-    } finally {
-    }
-  };
-
-  const createNewSlide = async () => {};
-  const deleteSlide = async () => {};
+  if (error) {
+    toast.error(error);
+  }
+  console.log(data);
   return (
     <Box
       display={"flex"}
@@ -64,15 +49,11 @@ const Carosel = ({ slider }: IProps) => {
         </Skeleton>
       ) : (
         <Box width={"100%"} height={"100%"}>
-          <ButtonGroup orientation="vertical">
-            <UploadFileButton
-              accept=".png, .jpg, .gif"
-              text="upload image"
-              onUpload={handleFileChange}
-            />
-            <Button onClick={createNewSlide}>New Slide</Button>
-            <Button onClick={deleteSlide}>Delete Slide</Button>
-          </ButtonGroup>
+          {data?.map((slide) => (
+            <Box key={slide.id} width={"100%"} height={"100%"}>
+              {slide.component}
+            </Box>
+          ))}
         </Box>
       )}
     </Box>

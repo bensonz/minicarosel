@@ -1,6 +1,7 @@
 import SliderDataGrid from "@/components/sliderDataGrid";
 import { SpacingVertical } from "@/components/uiComponents/spacer";
-import { ISlider, ISliderItem } from "@/definitions/slider.def";
+import UploadFileButton from "@/components/uiComponents/uploadFileButton";
+import { ISlider, ISliderImage, ISliderItem } from "@/definitions/slider.def";
 import { Delete } from "@mui/icons-material";
 import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import {
@@ -16,15 +17,21 @@ function SliderManagement() {
   const [selectedSlider, setSelectedSlider] = useState<ISlider | null>(null);
 
   const [rows, setRows] = useState<ISlider[]>([]);
-  const fetchRows = async () => {
+  const [images, setImages] = useState<ISliderImage[]>([]);
+  const fetchData = async () => {
     const resp = await fetch("/api/slider");
     if (resp) {
       const respJson = await resp.json();
       setRows(respJson.data);
     }
+    const resp2 = await fetch("/api/images");
+    if (resp2) {
+      const respJson = await resp2.json();
+      setImages(respJson.data);
+    }
   };
   useEffect(() => {
-    fetchRows();
+    fetchData();
   }, []);
 
   const columns: GridColDef<ISlider>[] = [
@@ -93,6 +100,27 @@ function SliderManagement() {
       toast.error("Failed to delete slider");
     }
   };
+  const handleFileChange = async (file: File) => {
+    const formData = new FormData();
+    if (!file) {
+      return;
+    }
+    formData.append("file", file);
+    try {
+      const resp = await fetch(`/api/images`, {
+        method: "POST",
+        body: formData,
+      });
+      const json = await resp.json();
+      if (!resp.ok) {
+        toast.error(json.message);
+        return;
+      }
+      toast.success("Uploaded image");
+    } catch (e) {
+      toast.error("Failed to upload image");
+    }
+  };
 
   return (
     <Stack width={"100%"} justifyContent={"center"} p={2}>
@@ -118,6 +146,18 @@ function SliderManagement() {
       />
       {selectedSlider?.id}
       <SliderDataGrid sliderId={selectedSlider?.id} />
+      {`Total images: ${images.length}`}
+
+      <UploadFileButton
+        accept=".png, .jpg, .gif"
+        text="upload image"
+        onUpload={handleFileChange}
+      />
+      {images.map((image) => (
+        <Box key={image.id}>
+          <img src={image.url} width={200} height={200} />
+        </Box>
+      ))}
     </Stack>
   );
 }

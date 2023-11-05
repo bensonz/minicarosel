@@ -1,58 +1,56 @@
 import fs from "fs";
 import path from "path";
 
-abstract class AbstractStorage<T> {
-  abstract save(data: T): Promise<string>;
-  abstract load(filePath: string): Promise<T>;
+abstract class AbstractStorage {
+  abstract save(data: any): Promise<string>;
+  abstract load(filePath: string): Promise<any>;
 }
 
-class LocalFileStorage extends AbstractStorage<File> {
-  constructor(private path: string) {
+class LocalFileStorage extends AbstractStorage {
+  constructor(private storagePath: string) {
     super();
   }
 
-  async save(data: File): Promise<string> {
-    const filePath = path.join(this.path, data.name);
+  async save(file: { name: string; path: string }): Promise<string> {
+    const fileName = path.basename(file.name);
+    const newFilePath = path.join(this.storagePath, fileName);
 
     return new Promise((resolve, reject) => {
-      fs.rename(data.name, filePath, async (err) => {
+      // Move the file from the temporary path to the new path
+      fs.rename(file.path, newFilePath, (err) => {
         if (err) {
           reject(err);
+        } else {
+          resolve(newFilePath);
         }
-        resolve(filePath);
       });
     });
   }
 
-  async load(filePath: string): Promise<File> {
+  async getFileMetadata(filePath: string): Promise<fs.Stats> {
+    const fullFilePath = path.join(this.storagePath, filePath);
+
     return new Promise((resolve, reject) => {
-      fs.readFile(filePath, (err, data) => {
+      fs.stat(fullFilePath, (err, stats) => {
         if (err) {
           reject(err);
+        } else {
+          resolve(stats);
         }
-        const file: File = {
-          name: path.basename(filePath),
-          size: data.byteLength,
-          type: "",
-          lastModified: new Date().getTime(),
-          webkitRelativePath: "",
-          slice: (start?: number, end?: number, contentType?: string) => {
-            const blob = new Blob([data.slice(start, end)], {
-              type: contentType,
-            });
-            return blob;
-          },
-          arrayBuffer: function (): Promise<ArrayBuffer> {
-            throw new Error("Function not implemented.");
-          },
-          stream: function (): ReadableStream<Uint8Array> {
-            throw new Error("Function not implemented.");
-          },
-          text: function (): Promise<string> {
-            throw new Error("Function not implemented.");
-          },
-        };
-        resolve(file);
+      });
+    });
+  }
+
+  async load(filePath: string): Promise<Buffer> {
+    const fullFilePath = path.join(this.storagePath, filePath);
+
+    return new Promise((resolve, reject) => {
+      fs.readFile(fullFilePath, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
       });
     });
   }
