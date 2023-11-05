@@ -67,13 +67,9 @@ const Carosel = ({ slider }: IProps) => {
     return () => clearInterval(timer);
   }, [data]);
 
-  const slideWidth = 100; // Assuming 100% of the container
-  const slideTransition = 0.5; // Transition time in seconds
-
   if (error) {
     toast.error(error);
   }
-  const slideCount = data?.length || 0;
 
   return (
     <Box
