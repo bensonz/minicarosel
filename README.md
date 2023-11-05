@@ -1,29 +1,45 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+#Mini-Carosel
 
-## Getting Started
+## Description
 
-First, run the development server:
+implement a mini carosel
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## How to run
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+To spin up a local development environment, run the following command:
 
 ```
 docker-compose up -dev-deps
 ```
+
+This will spin up a postgres database.
+
+Run
+
+```
+yarn
+```
+
+to install all dependencies.
+
+Then run
+
+```
+npx primsa migrate dev
+```
+
+to migrate the database.
+
+Then run
+
+```
+yarn dev
+```
+
+## How to use
+
+There is a simple UI to add a new carosel item. You can access it at http://localhost:3000/sliderManagement
+
+To view the carosel, go to http://localhost:3000/
+Select the carosel item you want to view.
+By default the carosel will auto play.
