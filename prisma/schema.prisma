@@ -11,31 +11,32 @@ datasource db {
 }
 
 model McImage {
-  id        Int       @id @default(autoincrement())
-  url       String
-  metaData  Json
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  McSlide   McSlide[]
+  id           Int            @id @default(autoincrement())
+  url          String
+  metaData     Json
+  McSliderItem McSliderItem[]
 }
 
-model McSlide {
-  id          Int       @id @default(autoincrement())
+model McSliderItem {
+  id          Int      @id @default(autoincrement())
   title       String
   description String
   buttonText  String
   component   String
-  bgImage     McImage   @relation(fields: [mcImageId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  mcImageId   Int
-  McSlider    McSlider? @relation(fields: [mcSliderId], references: [id])
-  mcSliderId  Int?
+  bgImage     McImage? @relation(fields: [mcImageId], references: [id])
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  mcImageId  Int?
+  McSlider   McSlider? @relation(fields: [mcSliderId], references: [id])
+  mcSliderId Int?
 }
 
 model McSlider {
-  id        Int       @id @default(autoincrement())
-  slides    McSlide[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id Int @id @default(autoincrement())
+
+  slides McSliderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

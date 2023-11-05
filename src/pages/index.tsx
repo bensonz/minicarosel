@@ -1,13 +1,35 @@
 import Head from "next/head";
 import Carosel from "../components/carosel";
-import { Stack } from "@mui/material";
+import { Box, Button, ButtonGroup, Stack, Typography } from "@mui/material";
 import { ISlider } from "../definitions/slider.def";
+import { useEffect, useState } from "react";
+import {
+  SpacingHorizontal,
+  SpacingVertical,
+} from "@/components/uiComponents/spacer";
+import { toast } from "react-toastify";
 
-interface IProps {
-  slides: ISlider[];
-}
+export default function Home() {
+  const [sliders, setSliders] = useState<ISlider[]>([]);
+  const [selectedSlider, setSelectedSlide] = useState<ISlider | null>(null);
 
-export default function Home({ slides }: IProps) {
+  const loadSliders = async () => {
+    const resp = await fetch("/api/slider");
+    if (resp) {
+      const respJson = await resp.json();
+      setSliders(respJson.data);
+    }
+  };
+
+  useEffect(() => {
+    loadSliders();
+  }, []);
+
+  const selectSlider = (sd: ISlider) => {
+    if (sd.id === selectedSlider?.id) return;
+    setSelectedSlide(sd);
+  };
+
   return (
     <>
       <Head>
@@ -29,15 +51,34 @@ export default function Home({ slides }: IProps) {
           alignItems={"center"}
           justifyContent={"center"}
         >
-          <Carosel />
+          <Stack
+            bgcolor={"white"}
+            p={1}
+            direction={"row"}
+            alignItems={"center"}
+          >
+            <Typography variant="h6">SliderId</Typography>
+            {sliders.length === 0 && <Box>No slider</Box>}
+            {sliders.map((slide, idx) => {
+              const selected = selectedSlider?.id === slide.id;
+              return (
+                <Button
+                  key={idx}
+                  onClick={() => selectSlider(slide)}
+                  disabled={selected}
+                  variant={selected ? "contained" : "outlined"}
+                  sx={{ m: 1 }}
+                >
+                  {slide.id}
+                </Button>
+              );
+            })}
+          </Stack>
+
+          <SpacingVertical space="20px" />
+          <Carosel slider={selectedSlider} />
         </Stack>
       </main>
     </>
   );
-}
-
-export async function getServerSideProps() {
-  return {
-    props: {},
-  };
 }

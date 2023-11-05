@@ -1,9 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import path from "path";
-import fs from "fs";
 import formidable from "formidable";
 import { PrismaClient } from "@prisma/client";
-import { LocalFileStorage } from "../../../backend/storage";
+import { LocalFileStorage } from "../../../../backend/storage";
 
 const prisma = new PrismaClient();
 const fileStorage = new LocalFileStorage("./public/uploads");

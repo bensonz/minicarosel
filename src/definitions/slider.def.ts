@@ -12,7 +12,11 @@ export interface ISliderItem {
   backgroundImage: ISliderImage;
 }
 
+/**
+ * id: string;
+ * slides: ISliderItem[];
+ */
 export interface ISlider {
   id: string;
-  data: ISliderItem[];
+  slides: ISliderItem[];
 }
