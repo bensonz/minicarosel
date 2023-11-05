@@ -11,6 +11,7 @@ export interface ISliderItem {
   buttonText: string;
   component: string;
   bgImage?: ISliderImage;
+  mcImageId?: string;
 }
 
 /**

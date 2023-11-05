@@ -7,7 +7,6 @@ import {
   GridToolbarContainer,
 } from "@mui/x-data-grid";
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import EditAddModal from "./editAddModal";
 
 interface IProps {
@@ -57,7 +56,7 @@ const SliderDataGrid = ({ sliderId }: IProps) => {
     { field: "description", headerName: "Description", width: 130 },
     { field: "buttonText", headerName: "Button text" },
     { field: "component", headerName: "Component" },
-    { field: "backgroundImage", headerName: "Background Image" },
+    { field: "mcImageId", headerName: "Background Image" },
     {
       field: "actions",
       headerName: "Actions",
@@ -69,11 +68,14 @@ const SliderDataGrid = ({ sliderId }: IProps) => {
   ];
   return (
     <>
-      <EditAddModal
-        slideData={slideData}
-        open={modalOpen}
-        setOpen={setModalOpen}
-      />
+      {modalOpen && (
+        <EditAddModal
+          sliderId={sliderId}
+          slideData={slideData}
+          open={modalOpen}
+          setOpen={setModalOpen}
+        />
+      )}
       <DataGrid
         loading={isLoading}
         rows={data}

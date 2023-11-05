@@ -3,7 +3,15 @@ import { SpacingVertical } from "@/components/uiComponents/spacer";
 import UploadFileButton from "@/components/uiComponents/uploadFileButton";
 import { ISlider, ISliderImage, ISliderItem } from "@/definitions/slider.def";
 import { Delete } from "@mui/icons-material";
-import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  Grid,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
 import {
   DataGrid,
   GridColDef,
@@ -117,6 +125,8 @@ function SliderManagement() {
         return;
       }
       toast.success("Uploaded image");
+      const newImages = [...images, json.data];
+      setImages(newImages);
     } catch (e) {
       toast.error("Failed to upload image");
     }
@@ -128,6 +138,7 @@ function SliderManagement() {
         Slider Management
       </Typography>
       <SpacingVertical space={"24px"} />
+
       <DataGrid
         sx={{ height: "80vh" }}
         rows={rows}
@@ -144,20 +155,30 @@ function SliderManagement() {
         columns={columns}
         onRowClick={(params) => setSelectedSlider(params.row)}
       />
-      {selectedSlider?.id}
+      <Typography variant="h6" textAlign={"center"}>
+        Selected slider: {selectedSlider?.id}
+      </Typography>
+
       <SliderDataGrid sliderId={selectedSlider?.id} />
       {`Total images: ${images.length}`}
 
+      <Typography variant="h6" textAlign={"center"}>
+        Images
+      </Typography>
       <UploadFileButton
         accept=".png, .jpg, .gif"
         text="upload image"
         onUpload={handleFileChange}
       />
-      {images.map((image) => (
-        <Box key={image.id}>
-          <img src={image.url} width={200} height={200} />
-        </Box>
-      ))}
+      <Grid>
+        <Grid container spacing={2}>
+          {images.map((image) => (
+            <Grid item key={image.id}>
+              <img src={image.url} width={200} height={200} />
+            </Grid>
+          ))}
+        </Grid>
+      </Grid>
     </Stack>
   );
 }
