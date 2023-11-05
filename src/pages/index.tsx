@@ -3,11 +3,7 @@ import Carosel from "../components/carosel";
 import { Box, Button, ButtonGroup, Stack, Typography } from "@mui/material";
 import { ISlider } from "../definitions/slider.def";
 import { useEffect, useState } from "react";
-import {
-  SpacingHorizontal,
-  SpacingVertical,
-} from "@/components/uiComponents/spacer";
-import { toast } from "react-toastify";
+import { SpacingVertical } from "@/components/uiComponents/spacer";
 
 export default function Home() {
   const [sliders, setSliders] = useState<ISlider[]>([]);

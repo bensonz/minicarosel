@@ -27,6 +27,7 @@ export default async function handler(
     case "PUT":
       const { title, description, buttonText, component, mcImageId } = req.body;
       const id = parseInt(req.body.id, 10);
+      const mcSliderId = parseInt(req.query.id as string, 10);
       const item = await prismaClient.mcSliderItem.upsert({
         where: { id: id || -1 }, // When creating, use a dummy ID that doesn't exist. `upsert` will then default to create operation.
         create: {
@@ -35,6 +36,7 @@ export default async function handler(
           buttonText,
           component,
           mcImageId: parseInt(mcImageId, 10),
+          mcSliderId,
         },
         update: {
           title,
